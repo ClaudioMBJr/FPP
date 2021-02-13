@@ -91,7 +91,7 @@ void* lab_production(void* arg) {
 
                 // printf("laboratorio %d entrou e deixou recursos \n", laboratory->id_lab);
                 pthread_mutex_unlock(laboratory->mutex);
-                sleep(0.5);
+                // sleep(0.5);
             }
             else {
                 // printf("laboratorio %d entrou e não deixou recursos pq estava lotado \n", laboratory->id_lab);
@@ -121,7 +121,7 @@ void* lab_production(void* arg) {
                     laboratory->count_production += 1;
                 // printf("laboratorio %d entrou e deixou recursos \n", laboratory->id_lab);
                     pthread_mutex_unlock(laboratory->mutex); 
-                    sleep(0.5);         
+                    // sleep(0.5);         
                 }
                 else{                
                 pthread_mutex_unlock(laboratory->mutex);
@@ -149,7 +149,7 @@ void* lab_production(void* arg) {
                     laboratory->count_production += 1;
                     // printf("laboratorio %d entrou e deixou recursos \n", laboratory->id_lab);
                     pthread_mutex_unlock(laboratory->mutex);
-                    sleep(0.5);
+                    // sleep(0.5);
                 }
                 else{
                     pthread_mutex_unlock(laboratory->mutex);
@@ -171,13 +171,15 @@ void* infected_consumer(void* arg) {
         // //ISSO AQUI PODE DAR MERDA!!
         // int all_jobs = jobs(infected->consumer_done, infected->minimal_objective);
         // //ISSO AQUI PODE DAR MERDA!!
+        pthread_mutex_lock(infected->mutex);
+
         int jobs_moment = jobs(infected->work_done, infected->minimal_objective);
         if (jobs_moment == 0) {
             consume = 0;
             pthread_mutex_unlock(infected->mutex);
         }
         else { 
-            pthread_mutex_lock(infected->mutex);
+            // pthread_mutex_lock(infected->mutex);
             int vet[6] = {0}; 
             int insume;
             for (int i = 0; i < 6; i++){
@@ -208,17 +210,15 @@ void* infected_consumer(void* arg) {
                 }
                 // printf("input1 -> %d \n", input1);
                 // printf("input1 -> %d \n", input2);
-                if (input1 == -1 || input2 == -1){
-                    pthread_mutex_unlock(infected->mutex);
-                    // printf("infectado %d entrou e nao achou recursos\n", infected->id_infected);
-                    // sleep(1);
-                }
-                else{
+                if (input1 != -1 && input2 != -1){
                     sem_wait(&infected->sem_bench[input1]);
                     sem_wait(&infected->sem_bench[input2]);
                     infected->work_done[3] += 1;
                     infected->count_injection += 1;
                     // printf("O infectado 0 está vacinando!!\n");
+                    pthread_mutex_unlock(infected->mutex);
+                }
+                else{
                     pthread_mutex_unlock(infected->mutex);
                     
                 }
@@ -239,17 +239,9 @@ void* infected_consumer(void* arg) {
                 // printf("input1 -> %d \n", input1);
                 // printf("input2 -> %d \n", input2);
                 
-                //ESSA CONDISIONAL TA ERADAAAAAA!! ------------------------------------------------------------------------------------
+                //ESSA CONDICIONAL TA ERADAAAAAA!! ------------------------------------------------------------------------------------
                 
-                if (input1 == -1 || input2 == -1){
-                    // printf("input1 -> %d \n", input1);
-                    // printf("input1 -> %d \n", input2);
-                    // printf("infectado %d entrou e nao achou recursos \n", infected->id_infected);
-                    pthread_mutex_unlock(infected->mutex);
-                    // sleep(1);
-
-                }
-                else{
+                if (input1 != -1 && input2 != -1){
                     // printf("input1 -> %d \n", input1);
                     // printf("input1 -> %d \n", input2);
                     sem_wait(&infected->sem_bench[input1]);
@@ -258,6 +250,10 @@ void* infected_consumer(void* arg) {
                     infected->count_injection += 1;
                     // printf("O infectado 1 está vacinando!!\n");
                     // exit(0);
+                    pthread_mutex_unlock(infected->mutex);
+
+                }
+                else{
                     pthread_mutex_unlock(infected->mutex);
                 }
             }
@@ -276,21 +272,17 @@ void* infected_consumer(void* arg) {
                 }
                 // printf("input1 -> %d \n", input1);
                 // printf("input2 -> %d \n", input2);
-                if (input1 == -1 || input2 == -1){
-                    // printf("input1 -> %d \n", input1);
-                    // printf("input1 -> %d \n", input2);
-                    // printf("infectado %d entrou e nao achou recursos \n", infected->id_infected);
-                    pthread_mutex_unlock(infected->mutex);
-                    // sleep(1);
-
-                }
-                else{
+                if (input1 != -1 && input2 != -1){
                     sem_wait(&infected->sem_bench[input1]);
                     sem_wait(&infected->sem_bench[input2]);
                     infected->work_done[5] += 1;
                     infected->count_injection += 1;
                     // printf("O infectado 2 está vacinando!!!\n");
                     // exit(0);
+                    pthread_mutex_unlock(infected->mutex);
+
+                }
+                else{
                     pthread_mutex_unlock(infected->mutex);
                 }
 
