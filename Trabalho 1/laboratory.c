@@ -10,7 +10,7 @@
 
 
 #define DEAD_VIRUS 1
-#define INPUTS 2
+#define SECRET_INPUTS 2
 #define INJECTION 3
 
 
@@ -51,7 +51,7 @@ void* lab_production(void* arg) {
                 else {
                     sem_post(&laboratory->sem_bench[0]);
                     sem_post(&laboratory->sem_bench[1]);
-                    laboratory->inputs_bench[0] = INPUTS;
+                    laboratory->inputs_bench[0] = SECRET_INPUTS;
                     laboratory->inputs_bench[1] = DEAD_VIRUS;
                     laboratory->work_done[0] += 1;
                     laboratory->count_production += 1;
@@ -101,7 +101,7 @@ void* lab_production(void* arg) {
                     sem_post(&laboratory->sem_bench[4]);
                     sem_post(&laboratory->sem_bench[5]);
                     laboratory->inputs_bench[4] = INJECTION;
-                    laboratory->inputs_bench[5] = INPUTS;
+                    laboratory->inputs_bench[5] = SECRET_INPUTS;
                     laboratory->work_done[2] += 1;
                     laboratory->count_production += 1;
                     laboratory->condition_stop +=1;         

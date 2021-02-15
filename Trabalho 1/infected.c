@@ -9,7 +9,7 @@
 #include "auxiliary_functions.h"
 
 #define DEAD_VIRUS 1
-#define INPUTS 2
+#define SECRET_INPUTS 2
 #define INJECTION 3
 
 
