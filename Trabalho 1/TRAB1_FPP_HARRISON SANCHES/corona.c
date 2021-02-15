@@ -13,7 +13,6 @@
 
 
 int main(int argc, char* argv[]){
-    //Criação das váriaveis de uso
     thread_laboratory* laboratorys = (thread_laboratory*)malloc(3*sizeof(thread_laboratory));
     thread_infected* infecteds = (thread_infected*)malloc(3*sizeof(thread_infected));
     pthread_mutex_t mutex;
@@ -26,15 +25,13 @@ int main(int argc, char* argv[]){
     }
 
     int num_jobs = atoi(argv[1]);
-    
-    //Iniciando o mutex
+ 
     pthread_mutex_init(&mutex,NULL);
     
     for(int i=0; i<6; i++){
         sem_init(&sem_bench[i],0,0);
     }
 
-    //Carregando os dados das structs
     for(int i = 0; i < 3; i++ ){
         laboratorys[i].id_lab = i;
         laboratorys[i].count_production = 0;
@@ -56,15 +53,12 @@ int main(int argc, char* argv[]){
         infecteds[i].minimal_objective = num_jobs;
     }
 
-    //Criando as threads
     for(int i = 0 ; i < 3 ; i++){
         pthread_create(&laboratorys[i].thread_id,NULL,lab_production,&(laboratorys[i]));
     }
     for(int i = 0 ; i < 3 ; i++){
         pthread_create(&infecteds[i].thread_id,NULL,infected_consumer,&(infecteds[i]));
     }
-
-    //Join nas threads
     for(int i = 0; i < 3; i++){
         pthread_join(laboratorys[i].thread_id,NULL);      
     }
@@ -72,7 +66,6 @@ int main(int argc, char* argv[]){
         pthread_join(infecteds[i].thread_id,NULL);      
     }
 
-    //Printando resultados
     for(int i = 0; i < 3; i++){
         printf("LABORATORIO %d PRODUZIU -> %d\n",i+1, work_done[i]);
     }

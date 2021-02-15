@@ -34,28 +34,21 @@ void* lab_production(void* arg) {
     int slot1, slot2;
     int  production = 1;
     while (production){
-        //Verifico se ainda preciso repor recursos, se nao preciso, eu finalizo o processo
         int jobs_moment = jobs(laboratory->work_done, laboratory->minimal_objective);
             if (jobs_moment == 0){
                 production = 0;
             }
-
-
         if (laboratory->id_lab == 0){
-            //Verifico se os slots destinados para reposição do laboratório estáo sinalizados com semáforos 0
             sem_getvalue(&laboratory->sem_bench[0], &slot1);
             sem_getvalue(&laboratory->sem_bench[1], &slot2);
             if (slot1 == 0 && slot2 == 0){
-                //se ambos os slots estão com 0, então o lab deve repor, logo, eu dou lock
                 pthread_mutex_lock(laboratory->mutex);
-                //verifico novamente se eu ainda preciso repor, caso contrário, eu finalizo o processo
                 int jobs_moment = jobs(laboratory->work_done, laboratory->minimal_objective);
                 if (jobs_moment == 0) {
                     production = 0;
                     pthread_mutex_unlock(laboratory->mutex);
                 }
                 else {
-                    // faço a reposição dos recursos e dou post nos semáforos, sinalizando que tem recursos para serem consumidos
                     sem_post(&laboratory->sem_bench[0]);
                     sem_post(&laboratory->sem_bench[1]);
                     laboratory->inputs_bench[0] = SECRET_INPUTS;
@@ -65,12 +58,10 @@ void* lab_production(void* arg) {
                     laboratory->condition_stop += 1;
                     pthread_mutex_unlock(laboratory->mutex);
                     // sleep(0.5);
-                    //LIBERO O MUTEX
                 }
             }
 
         }
-        //Repito o processo para todas as outras threas lab
         else if (laboratory->id_lab == 1){
             sem_getvalue(&laboratory->sem_bench[2], &slot1);
             sem_getvalue(&laboratory->sem_bench[3], &slot2);

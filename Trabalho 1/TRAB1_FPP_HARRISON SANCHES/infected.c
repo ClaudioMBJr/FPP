@@ -8,8 +8,11 @@
 #include <unistd.h>
 #include "auxiliary_functions.h"
 
+#define DEAD_VIRUS 1
+#define SECRET_INPUTS 2
+#define INJECTION 3
 
-//Struct da thread
+
 typedef struct thread_infected{
     //mudar para string
     int id_infected;
@@ -35,7 +38,6 @@ void* infected_consumer(void* arg) {
         int input2 = -1;
         int insume;
 
-        //VERIFICO SE TEM INSUMO NA BANCADA! 
         for (int i = 0; i < 6; i++){
             sem_getvalue(&infected->sem_bench[i], &insume);
             if (insume == 1){
@@ -43,12 +45,7 @@ void* infected_consumer(void* arg) {
             }
         }              
 
-        
         if (infected->id_infected == 0){
-            //Caso o laboratório for o 1, ele precisa dos INsumos 2 e 3
-            //ENtão, eu verifoco se eles estavam disponíveis na bancada
-            //OBS IMPORTANTE: EU PEGO SEMPRE O PRIMEIRO PAR DE RECURSO QUE ELA ENCONTRAR!
-            //Essa busca poderia ser aleatória na bancada, mas implementei assim.
             for (int j = 0; j < 6; j++){
                 if (vet[j] == 2){
                     input1 = j;
@@ -68,7 +65,6 @@ void* infected_consumer(void* arg) {
                 int input1 = -1;
                 int input2 = -1;
                 int sinal;
-                //Verifico novamente a situação dos semáforos
                 for (int i = 0; i < 6; i++){
                     sem_getvalue(&infected->sem_bench[i], &sinal);
                     if (sinal == 1){
@@ -87,17 +83,13 @@ void* infected_consumer(void* arg) {
                         break;
                     }
                 }
-                //verico se os recursos estao la novamente
+                //verico se os recursos estao ok
                 if (input1 != -1 && input2 != -1){
-                    //se os recursos estão lá, eu verifico se eu ainda preciso consumir
-                    //se eu nao preciso consumir mais, eu finalizo o processo da thread
                     int jobs_moment = jobs(infected->work_done, infected->minimal_objective);
                     if (jobs_moment == 0){
                         consume = 0;
                         pthread_mutex_unlock(infected->mutex);
                     }
-                    //caso contrário, a thread consome e muda os valores dos respectivos semáforos
-                    // SInalizando que consumiu e que aquele produto já pode ter reposição
                     else{                    
                         sem_wait(&infected->sem_bench[input1]);
                         sem_wait(&infected->sem_bench[input2]);
@@ -109,8 +101,6 @@ void* infected_consumer(void* arg) {
                     }       
                 
                 }
-                //se os recursos não estavam lá na hora do lock, eu verifico tbm se eu ainda preciso fazer o trabalho
-                //se eu nao preciso, eu finalizo o processo e libero o mutex;
                 else{
                     int jobs_moment = jobs(infected->work_done, infected->minimal_objective);
                     if (jobs_moment == 0){
@@ -119,7 +109,6 @@ void* infected_consumer(void* arg) {
                     pthread_mutex_unlock(infected->mutex);
                 }
             }
-            //Caso não tenha recurso antes de dar o lock, a célula tbm verifica se ainda precisa fazer o trabalho de consumir
             else{
                 int jobs_moment = jobs(infected->work_done, infected->minimal_objective);
                 if (jobs_moment == 0){
@@ -129,7 +118,6 @@ void* infected_consumer(void* arg) {
             }
         }
 
-        //Repito o processo da thread anterior para as outras threadss
         else if (infected->id_infected == 1){
             for (int j = 0; j < 6; j++){
                 if (vet[j] == 1){
