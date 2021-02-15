@@ -96,7 +96,7 @@ void* lab_production(void* arg) {
                     laboratory->count_production += 1;
                     laboratory->condition_stop += 1;
                     pthread_mutex_unlock(laboratory->mutex);
-                    sleep(0);
+                    // sleep(0);
                 // }
                 }
             }
@@ -132,7 +132,7 @@ void* lab_production(void* arg) {
                     laboratory->condition_stop += 1;
 
                     pthread_mutex_unlock(laboratory->mutex);
-                    sleep(0.5);
+                    // sleep(0.5);
                 }
             }
         }       
@@ -158,7 +158,7 @@ void* lab_production(void* arg) {
                     laboratory->count_production += 1;
                     laboratory->condition_stop +=1;         
                     pthread_mutex_unlock(laboratory->mutex);
-                    sleep(0.5);
+                    // sleep(0.5);
                 }
             }
         }  
@@ -239,7 +239,7 @@ void* infected_consumer(void* arg) {
                         // printf("O INFECTADO %d IRA CONSUMIR OS RECURSOS QUE ESTAO NA POSIÇÃO %d e %d \n", infected->id_infected, input1, input2);
                         // printf("O infectado 0 está vacinando!!\n");
                         pthread_mutex_unlock(infected->mutex);
-                        sleep(0.5);
+                        // sleep(0.5);
                     }       
                 
                 }
@@ -315,7 +315,7 @@ void* infected_consumer(void* arg) {
                         // printf("O INFECTADO %d IRA CONSUMIR OS RECURSOS QUE ESTAO NA POSIÇÃO %d e %d \n", infected->id_infected, input1, input2);
                         // printf("O infectado 1 está vacinando!!\n");
                         pthread_mutex_unlock(infected->mutex);
-                        sleep(0.5);
+                        // sleep(0.5);
 
                     }       
                 
@@ -391,7 +391,7 @@ void* infected_consumer(void* arg) {
                         // printf("O INFECTADO %d IRA CONSUMIR OS RECURSOS QUE ESTAO NA POSIÇÃO %d e %d \n", infected->id_infected, input1, input2);
                         // printf("O infectado 2 está vacinando!!\n");
                         pthread_mutex_unlock(infected->mutex);
-                        sleep(0.5);
+                        // sleep(0.5);
 
                     }       
                 
