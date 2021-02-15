@@ -7,8 +7,10 @@
 #include <time.h>
 #include <semaphore.h>
 #include <unistd.h>
+#include <stdio.h>
 #include <laboratory.h>
 #include <infected.h>
+
 
 int main(int argc, char* argv[]){
     thread_laboratory* laboratorys = (thread_laboratory*)malloc(3*sizeof(thread_laboratory));
@@ -17,17 +19,12 @@ int main(int argc, char* argv[]){
     sem_t* sem_bench = (sem_t*)malloc(6*sizeof(sem_t));
     int* inputs_bench = (int*)malloc(6*sizeof(int));
     int* work_done = (int*)malloc(6*sizeof(int));
-    // int* consumer_done = (int*)malloc(3*sizeof(int));
 
     for (int i = 0; i < 6; i++){
         work_done[i] = 0;
     }
-    // for (int i = 0; i < 3; i++){
-    //     consumer_done[i] = 0;
-    // }
 
     int num_jobs = atoi(argv[1]);
-    // printf("ARGUMENTO DE ENTRADA = %d \n", num_jobs);
  
     pthread_mutex_init(&mutex,NULL);
     
@@ -69,9 +66,12 @@ int main(int argc, char* argv[]){
         pthread_join(infecteds[i].thread_id,NULL);      
     }
 
-
-    for(int i = 0; i < 6; i++){
-        printf(" JOBS -> %d\n", work_done[i]);
+    for(int i = 0; i < 3; i++){
+        printf(" LABORATORIO PRODUZIU %d -> %d\n",i, work_done[i]);
+    }
+    printf("\n");
+    for(int i = 3; i < 6; i++){
+        printf(" INFECTADO CONSUMIU %d -> %d\n",i, work_done[i]);
     }
     printf("\n");
 

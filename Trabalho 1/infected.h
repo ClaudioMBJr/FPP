@@ -1,5 +1,6 @@
-#ifndef  FILE_H_INFECTED
-#define  FILE_H_INFECTED
+#ifndef  INFECTED_H
+#define  INFECTED_H
+#include <stdio.h>
 
 
 typedef struct thread_infected{

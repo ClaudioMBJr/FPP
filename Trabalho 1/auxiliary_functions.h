@@ -1,6 +1,6 @@
 
-#ifndef  FILE_H_AUXILIARY_FUNCTIONS
-#define  FILE_H_AUXILIARY_FUNCTIONS
+#ifndef  AUXILIARY_FUNCTIONS
+#define  AUXILIARY_FUNCTIONS
 
 int jobs(int* list, int objective);
 
