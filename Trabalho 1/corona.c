@@ -67,11 +67,12 @@ int main(int argc, char* argv[]){
     }
 
     for(int i = 0; i < 3; i++){
-        printf(" LABORATORIO %d PRODUZIU -> %d\n",i, work_done[i]);
+        printf("LABORATORIO %d PRODUZIU -> %d\n",i+1, work_done[i]);
     }
     printf("\n");
+    
     for(int i = 3; i < 6; i++){
-        printf(" INFECTADO %d CONSUMIU -> %d\n",i, work_done[i]);
+        printf("INFECTADO %d CONSUMIU -> %d\n",i-2, work_done[i]);
     }
     printf("\n");
 

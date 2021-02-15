@@ -100,8 +100,8 @@ void* lab_production(void* arg) {
                 else {
                     sem_post(&laboratory->sem_bench[4]);
                     sem_post(&laboratory->sem_bench[5]);
-                    laboratory->inputs_bench[4] = INPUTS;
-                    laboratory->inputs_bench[5] = INJECTION;
+                    laboratory->inputs_bench[4] = INJECTION;
+                    laboratory->inputs_bench[5] = INPUTS;
                     laboratory->work_done[2] += 1;
                     laboratory->count_production += 1;
                     laboratory->condition_stop +=1;         
