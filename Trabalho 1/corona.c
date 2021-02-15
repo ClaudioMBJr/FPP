@@ -8,8 +8,8 @@
 #include <semaphore.h>
 #include <unistd.h>
 #include <stdio.h>
-#include <laboratory.h>
-#include <infected.h>
+#include "laboratory.h"
+#include "infected.h"
 
 
 int main(int argc, char* argv[]){
@@ -67,11 +67,11 @@ int main(int argc, char* argv[]){
     }
 
     for(int i = 0; i < 3; i++){
-        printf(" LABORATORIO PRODUZIU %d -> %d\n",i, work_done[i]);
+        printf(" LABORATORIO %d PRODUZIU -> %d\n",i, work_done[i]);
     }
     printf("\n");
     for(int i = 3; i < 6; i++){
-        printf(" INFECTADO CONSUMIU %d -> %d\n",i, work_done[i]);
+        printf(" INFECTADO %d CONSUMIU -> %d\n",i, work_done[i]);
     }
     printf("\n");
 

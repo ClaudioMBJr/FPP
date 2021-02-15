@@ -6,7 +6,7 @@
 #include <time.h>
 #include <semaphore.h>
 #include <unistd.h>
-#include <auxiliary_functions.h>
+#include "auxiliary_functions.h"
 
 #define DEAD_VIRUS 1
 #define INPUTS 2
