@@ -8,9 +8,8 @@
 #include <unistd.h>
 #include <stdio.h>
 
-// #define N_CLIENTES 10
-// #define N_BARBEIROS 2
-// #define N_CADEIRAS 5
+// CRIAR UMA BARBEARIA
+
 
 typedef struct thread_barber{
     int id_barber;
@@ -19,6 +18,7 @@ typedef struct thread_barber{
     sem_t* sem_service_chair;
     sem_t* sem_barber_chair;
     sem_t* sem_cut_hair;
+    int* screen;
 
 }thread_barber;
 
@@ -29,9 +29,10 @@ typedef struct thread_client{
     sem_t* sem_service_chair;
     sem_t* sem_barber_chair;
     sem_t* sem_cut_hair;
+    int* screen;
+
 
 }thread_client;
-
 
 
 sem_t sem_chairs;
@@ -52,10 +53,12 @@ void* barber_shop(void * arg) {
         visor = barber->id_barber;
         printf("barbeiro %d escreveu seu nome no visor!\n", barber->id_barber);
         sem_post(&sem_read_display);
+        // printf("aaa \n");
         sem_wait(&barber->sem_service_chair[barber->id_barber]);
+        // sleep(10);
         printf("Barbeiro %d cortou o cabelo de um cliente.\n", barber->id_barber);
         sem_post(&barber->sem_cut_hair[barber->id_barber]);
-        sleep(random()%3);
+        // sleep(random()%3);
     }
     return NULL;
 }
@@ -64,12 +67,13 @@ void* clients_barber(void* arg) {
     thread_client* client = (thread_client*)arg;
     int my_chair;
 
-    sleep(random()%3);
     if (sem_trywait(&sem_chairs) == 0) {
-        printf("Cliente %d entrou na barbearia.\n", client->id_client);
+        printf("Cliente %d entrou na barbearia\n", client->id_client);
         sem_wait(&sem_read_display);
         my_chair = visor;
+        printf("Cliente %d entrou leu o visor que ta com valor %d.\n", client->id_client, visor);
         sem_post(&sem_changes_display);
+        // semaforo pra avisar aos clientes que aquele barb ta trabalhando
         sem_wait(&client->sem_barber_chair[my_chair]);
         printf("Cliente %d sentou na cadeira do barbeiro %d.\n", client->id_client, my_chair);
         sem_post(&client->sem_service_chair[my_chair]);
