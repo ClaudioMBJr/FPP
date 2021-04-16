@@ -111,7 +111,7 @@ void* barber_jobs(void * arg) {
 
 void* clients_barber(void* arg) {
     thread_client* client = (thread_client*)arg;
-    int my_chair;
+    int barber_available;
     if (client->barber_shop->is_open == 0) {
         return NULL;
     }
@@ -119,17 +119,16 @@ void* clients_barber(void* arg) {
         if (sem_trywait(&sem_chairs) == 0) {
             printf("Cliente %d entrou na barbearia\n", client->id_client);
             sem_wait(&sem_read_display);
-            my_chair = *(client->screen);
-            // my_chair = screen;
-            printf("Cliente %d entrou leu o visor que ta com valor %d.\n", client->id_client, my_chair);
+            barber_available = *(client->screen);
+            printf("Cliente %d entrou leu o visor que ta com valor %d.\n", client->id_client, barber_available);
             sem_post(&sem_changes_display);
             // semaforo pra avisar aos clientes que aquele barb ta trabalhando
-            sem_wait(&client->sem_barber_chair[my_chair]);
-            printf("Cliente %d sentou na cadeira do barbeiro %d.\n", client->id_client, my_chair);
-            sem_post(&client->sem_service_chair[my_chair]);
+            sem_wait(&client->sem_barber_chair[barber_available]);
+            printf("Cliente %d sentou na cadeira do barbeiro %d.\n", client->id_client, barber_available);
+            sem_post(&client->sem_service_chair[barber_available]);
             sem_post(&sem_chairs);
-            sem_wait(&client->sem_cut_hair[my_chair]);
-            sem_post(&client->sem_barber_chair[my_chair]);
+            sem_wait(&client->sem_cut_hair[barber_available]);
+            sem_post(&client->sem_barber_chair[barber_available]);
 
             printf("Cliente %d deixou a barbearia.\n", client->id_client);
 
@@ -149,6 +148,10 @@ int main(int argc, char* argv[]){
 
     int num_barber = atoi(argv[1]);
     int num_chairs = atoi(argv[2]);
+    if ( num_barber <= 0  || num_chairs <= 0 ){
+        printf("não abriremos hoje!\n");
+        return 0;
+    }
     int minimum_service_quantity = atoi(argv[3]);
     int screen = -1;
 
