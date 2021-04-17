@@ -235,6 +235,7 @@ int main(int argc, char* argv[]){
         i += 1;
         // printf("aaa");
     }
+    
     for (int i = 0; i < num_barber; i++) {
         pthread_join(barbers[i].thread_id, NULL);
     } 
