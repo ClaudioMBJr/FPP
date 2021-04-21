@@ -90,12 +90,22 @@ void* barber_jobs(void * arg) {
             return NULL;
         }
         sem_wait(barber->sem_changes_display);
+        
+        
+        
         *(barber->screen) = barber->id_barber;
         // screen = barber->id_barber;
         printf("barbeiro %d escreveu seu nome no visor! valor do visor é de: %d\n", barber->id_barber, *(barber->screen));
         sem_post(barber->sem_read_display);
         // printf("aaa \n");
         sem_wait(&barber->sem_service_chair[barber->id_barber]);
+
+
+
+
+
+
+
         // sleep(10);
         printf("Barbeiro %d cortou o cabelo de um cliente.\n", barber->id_barber);
         // pthread_mutex_lock(barber->mutex);
@@ -123,6 +133,8 @@ void* clients_barber(void* arg) {
             printf("Cliente %d entrou leu o visor que ta com valor %d.\n", client->id_client, barber_available);
             sem_post(client->sem_changes_display);
             // semaforo pra avisar aos clientes que aquele barb ta trabalhando
+
+
             sem_wait(&client->sem_barber_chair[barber_available]);
             printf("Cliente %d sentou na cadeira do barbeiro %d.\n", client->id_client, barber_available);
             sem_post(&client->sem_service_chair[barber_available]);
@@ -130,7 +142,10 @@ void* clients_barber(void* arg) {
             sem_wait(&client->sem_cut_hair[barber_available]);
             sem_post(&client->sem_barber_chair[barber_available]);
 
+
+
             printf("Cliente %d deixou a barbearia.\n", client->id_client);
+            return NULL;
 
         } 
         else{
@@ -231,11 +246,28 @@ int main(int argc, char* argv[]){
         client->sem_read_display = &sem_read_display;
 
         // client->number_of_barbers = num_barber;
-        pthread_create(&client[0].thread_id, NULL, clients_barber, &(client)[0]);
+
+        int error = pthread_create(&client[0].thread_id, NULL, clients_barber, &(client)[0]);
+        if (error != 0){
+            printf("error ao criar o cliente \n");
+            for(int j = 0; j < num_barber; j++){
+                printf("barbeiro %d atendeu -> %d\n",j, pitoco_barber_shop->barber_service[j]);
+            }
+            printf("\n");
+            return -1;
+            // sleep(10);
+        }
+        free(client);
         i += 1;
         // printf("aaa");
     }
     
+    for(int i =0 ; i <num_barber;i++){
+        sem_post(&sem_service_chair[i]);
+        sem_post(&sem_changes_display);
+    }
+
+
     for (int i = 0; i < num_barber; i++) {
         pthread_join(barbers[i].thread_id, NULL);
     } 
