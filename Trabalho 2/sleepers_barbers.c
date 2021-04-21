@@ -83,7 +83,20 @@ int main(int argc, char* argv[]){
         pthread_create(&barbers[i].thread_id, NULL, barber_jobs, &(barbers[i]));
     }
 
+    // pthread_attr_t tattr;
 
+
+    /* inicializa variavel atributo thread */
+    // if (pthread_attr_init(&tattr) != 0) {
+    //     printf("Erro ao inicializar o thread atributo \n");
+    //     return -1;
+    // }
+
+    /* define atributo para detached (recursos podem ser reutilizados assim que o encadeamento termina) */
+    // if (pthread_attr_setdetachstate(&tattr, PTHREAD_CREATE_DETACHED) != 0) {
+    //     printf("Erro ao definir atributo da thread \n");
+    //     return -1;
+    // }
     // printf("passe daqui \n");
 
     int i = 0;
@@ -106,7 +119,9 @@ int main(int argc, char* argv[]){
         client->sem_read_display = &sem_read_display;
         
 
-        int error = pthread_create(&client[0].thread_id, NULL, clients_barber, &(client)[0]);
+        // int error = pthread_create(&client[0].thread_id, &tattr, clients_barber, &(client)[0]);
+        int error = pthread_create(&client[0].thread_id,NULL, clients_barber, &(client)[0]);
+
         // if (error != 0){
         //     printf("error ao criar o cliente \n");
         //     return -1;
