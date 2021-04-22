@@ -28,47 +28,46 @@ typedef struct thread_barber{
 
 void* barber_jobs(void * arg) {
     thread_barber* barber = (thread_barber*)arg;
-    printf("barbeiro %d chegou para trabalhar! \n", barber->id_barber);
+    // printf("barbeiro %d chegou para trabalhar! \n", barber->id_barber);
     int is_open = barber->barber_shop->is_open;
     while (is_open){
-        //Verifico se ainda preciso repor recursos, se nao preciso, eu finalizo o processo
+        /*Verifico se ainda preciso repor recursos, se nao preciso, eu finalizo o processo*/
         int jobs_moment = jobs(barber->barber_shop->barber_service, barber->minimum_service_quantity, barber->barber_shop->number_of_barbers);
         if (jobs_moment == 0){
             pthread_mutex_lock(barber->mutex);
-            printf("barbearia fechada! Os barbeiros ja trabalharam o que devia por hoje...");
+            // printf("barbearia fechada! Os barbeiros ja trabalharam o que devia por hoje...");
             barber->barber_shop->is_open = 0;
             is_open = 0;
             pthread_mutex_unlock(barber->mutex);
             return NULL;
         }
 
-
+        /* Espera pra mudar o sinal do visor */
         sem_wait(barber->sem_changes_display);
         jobs_moment = jobs(barber->barber_shop->barber_service, barber->minimum_service_quantity,barber->barber_shop->number_of_barbers);
         if (jobs_moment == 0){
             pthread_mutex_lock(barber->mutex);
-            printf("barbearia fechada! Os barbeiros ja trabalharam o que devia por hoje...");
+            // printf("barbearia fechada! Os barbeiros ja trabalharam o que devia por hoje...");
             barber->barber_shop->is_open = 0;
             pthread_mutex_unlock(barber->mutex);
             is_open = 0;
-
             return NULL;
         }
 
-
-
+        /* muda o sinal do visor */
         *(barber->screen) = barber->id_barber;
-        // screen = barber->id_barber;
-        printf("barbeiro %d escreveu seu nome no visor! valor do visor é de: %d\n", barber->id_barber, *(barber->screen));
+
+        // printf("barbeiro %d escreveu seu nome no visor! valor do visor é de: %d\n", barber->id_barber, *(barber->screen));
+        
+        /*Libera o visor para ser modificado */
         sem_post(barber->sem_read_display);
-        // printf("aaa \n");
 
-
+        /* Espera na sua cadeira ser acordado por um cliente */
         sem_wait(&barber->sem_service_chair[barber->id_barber]);
         jobs_moment = jobs(barber->barber_shop->barber_service, barber->minimum_service_quantity,barber->barber_shop->number_of_barbers);
         if (jobs_moment == 0){
             pthread_mutex_lock(barber->mutex);
-            printf("barbearia fechada! Os barbeiros ja trabalharam o que devia por hoje...");
+            // printf("barbearia fechada! Os barbeiros ja trabalharam o que devia por hoje...");
             barber->barber_shop->is_open = 0;
             pthread_mutex_unlock(barber->mutex);
             is_open = 0;
@@ -76,14 +75,15 @@ void* barber_jobs(void * arg) {
             return NULL;
         }
 
-        // sleep(0.2);
-        printf("Barbeiro %d cortou o cabelo de um cliente.\n", barber->id_barber);
-        // pthread_mutex_lock(barber->mutex);
-        barber->barber_shop->barber_service[barber->id_barber] += 1;
-        // pthread_mutex_unlock(barber->mutex);
+        // sleep(0.5);
+        // printf("Barbeiro %d cortou o cabelo de um cliente.\n", barber->id_barber);
 
+        /*Cnntabiliza mais um corte par ao barbeiro*/
+        barber->barber_shop->barber_service[barber->id_barber] += 1;
+
+        /*Libera o semaforo pois já cortou o cabelo */
         sem_post(&barber->sem_cut_hair[barber->id_barber]);
-        // sleep(random()%3);
+        // sleep(1);
     }
     return NULL;
 }

@@ -33,30 +33,42 @@ void* clients_barber(void* arg) {
         return NULL;
     }
     else{
-        // dar lock pra ve se ta aberta ainda
+        /* Tenta ver se tem cadeira disponivel. Caso não tenha, vai embora*/
         if (sem_trywait(client->barber_shop->sem_chairs) == 0) {
-            printf("Cliente %d entrou na barbearia\n", client->id_client);
+            // printf("Cliente %d entrou na barbearia\n", client->id_client);
+            
+            /*Aguarda para ler o display*/
             sem_wait(client->sem_read_display);
-            // printf("TATATAATATA");
             barber_available = *(client->screen);
-            printf("Cliente %d leu o visor avisando que o barbeiro %d está dormindo na cadeira esperando pra ser acordado e trabalhar \n", client->id_client, barber_available);
+            // printf("Cliente %d leu o visor avisando que o barbeiro %d está dormindo na cadeira esperando pra ser acordado e trabalhar \n", client->id_client, barber_available);
+ 
+            /*Avisa que já leu/entendeu que foi chamado e que pode chamar outro*/
             sem_post(client->sem_changes_display);
-            // semaforo pra avisar aos clientes que aquele barb ta trabalhando
+
+            /*semaforo pra avisar aos clientes que aquele barb ta trabalhando*/
             sem_wait(&client->sem_barber_chair[barber_available]);
-            printf("Cliente %d sentou na cadeira do barbeiro %d.\n", client->id_client, barber_available);
+            // printf("Cliente %d sentou na cadeira do barbeiro %d.\n", client->id_client, barber_available);
+
+            /* COloca o barbeiro pra trabalhar*/
             sem_post(&client->sem_service_chair[barber_available]);
+
+            /*Libera vaga nas cadeiras */
             sem_post(client->barber_shop->sem_chairs);
+
+            /*Espera o cabelo ser cortado */
             sem_wait(&client->sem_cut_hair[barber_available]);
+
+            /* Avisa aos clientes que o barb terminou o trab */
             sem_post(&client->sem_barber_chair[barber_available]);
 
-            printf("Cliente %d deixou a barbearia.\n", client->id_client);
+            // printf("Cliente %d foi embora da barbearia com o cabelo cortado.\n", client->id_client);
             return NULL;
             
         } 
         else{
-            int ocupation;
-            sem_getvalue(client->barber_shop->sem_chairs, &ocupation);
-            printf("Cliente %d não entrou na barbearia. A quantidade de cadeiras disponiveis eram de %d \n", client->id_client, ocupation);
+            // int ocupation;
+            // sem_getvalue(client->barber_shop->sem_chairs, &ocupation);
+            // printf("Cliente %d não entrou na barbearia. A quantidade de cadeiras disponiveis eram de %d \n", client->id_client, ocupation);
             return NULL;
         }
 
