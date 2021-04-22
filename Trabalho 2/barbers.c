@@ -76,7 +76,6 @@ void* barber_jobs(void * arg) {
             return NULL;
         }
 
-
         // sleep(0.2);
         printf("Barbeiro %d cortou o cabelo de um cliente.\n", barber->id_barber);
         // pthread_mutex_lock(barber->mutex);

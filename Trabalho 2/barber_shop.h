@@ -9,4 +9,8 @@ typedef struct barber_shop{
 
 }barber_shop;
 
+void* close_barber_shop(sem_t* sem_service_chair, sem_t* sem_changes_display, int number_barbers);
+
+
+
 #endif

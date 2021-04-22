@@ -128,33 +128,34 @@ int main(int argc, char* argv[]){
         //     // sleep(10);
         // }
 
-
 		if (error != 0)
 			handle_error_en(error, "pthread_create");
 
+        // free(client);
         i += 1;
         // sleep(0.3);
 
     }
 
-    printf("cheguei aqui entao todos os barbeiros terminaram seu trabalho\n");
+    printf("todos os barbeiros terminaram seu trabalho\n");
     printf("\n");
     // int value;
     // sem_getvalue(&sem_chairs, &value);
     // printf("AINDA EXISTEM %d CLIENTES PARA SEREM ATENDIDOS", value);
     
-    
-    for (int i = 0; i < num_barber; i++){
-        sem_post(&barbers[i].sem_service_chair[barbers[i].id_barber]);
-    }
 
-    for(int i =0 ; i <num_barber;i++){
-        sem_post(&sem_service_chair[i]);
-        sem_post(&sem_changes_display);
-    }
+    // fazer função encerra expediente
+
+    close_barber_shop(sem_service_chair, &sem_changes_display, num_barber);
+
+    // for(int i =0 ; i <num_barber;i++){
+    //     sem_post(&sem_service_chair[i]);
+    //     sem_post(&sem_changes_display);
+    // }
 
     printf("\n");
-
+    close_barber_shop(sem_service_chair, &sem_changes_display, num_barber);
+    sleep(2);
 
     for (int i = 0; i < num_barber; i++) {
         pthread_join(barbers[i].thread_id, NULL);

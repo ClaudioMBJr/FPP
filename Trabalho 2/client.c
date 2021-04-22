@@ -28,7 +28,7 @@ typedef struct thread_client{
 void* clients_barber(void* arg) {
     thread_client* client = (thread_client*)arg;
     int barber_available;
-    // dar lock pra ve se ta aberta ainda
+
     if (client->barber_shop->is_open == 0) {
         return NULL;
     }
@@ -39,7 +39,7 @@ void* clients_barber(void* arg) {
             sem_wait(client->sem_read_display);
             // printf("TATATAATATA");
             barber_available = *(client->screen);
-            printf("Cliente %d entrou leu o visor que ta com valor %d.\n", client->id_client, barber_available);
+            printf("Cliente %d leu o visor avisando que o barbeiro %d está dormindo na cadeira esperando pra ser acordado e trabalhar \n", client->id_client, barber_available);
             sem_post(client->sem_changes_display);
             // semaforo pra avisar aos clientes que aquele barb ta trabalhando
             sem_wait(&client->sem_barber_chair[barber_available]);
@@ -61,5 +61,4 @@ void* clients_barber(void* arg) {
         }
 
     }
-    return NULL;
 }
